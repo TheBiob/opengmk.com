@@ -16,6 +16,14 @@
         Theoretically if you had a block with an odd-numbered bbox_top, you would be able to have both .5 coordinates instead of neither.
     --->
     <script>
+		const copymacro = () => {
+            const answer = document.getElementById("answer").innerHTML;
+			const index = answer.indexOf('Macro: ');
+			if (index >= 0) {
+				navigator.clipboard.writeText(answer.substring(index + 'Macro: '.length).replace(/&gt;/g, '>'));
+			}
+		}
+	
         const calculate = () => {
             const ycoord = parseFloat(document.getElementById("ycoord").value);
             if (isNaN(ycoord)) {
@@ -109,12 +117,14 @@
                 if (fastest_single !== null && fastest_single <= fastest_double.j1 + fastest_double.j2 + 1) {
                     document.getElementById("answer").innerHTML
                         = "Shortest route is " + fastest_single + " frames:" +
-                        " press shift, advance " + fastest_single + " times";
+                        " press shift, advance " + fastest_single + " times" +
+						" Macro: LeftShift(P)" + '>'.repeat(fastest_single) + ".";
                 } else {
                     document.getElementById("answer").innerHTML
                         = "Shortest route is " + (fastest_double.j1 + fastest_double.j2 + 1) + " frames:" +
                         " press shift, advance " + fastest_double.j1 + " times;" +
-                        " release shift, advance 1 time; press shift, advance " + fastest_double.j2 + " times";
+                        " release shift, advance 1 time; press shift, advance " + fastest_double.j2 + " times" +
+						" Macro: LeftShift(P)" + '>'.repeat(fastest_double.j1) + ".>." + '>'.repeat(fastest_double.j2) + ".";
                 }
             }
         };
@@ -142,7 +152,8 @@
                     y < target_max
                 ) {
                     output = "Shortest route is " + j1frames + " frames:" +
-                        " press shift, advance " + j1frames + " times";
+                        " press shift, advance " + j1frames + " times" +
+						" Macro: LeftShift(P)" + '>'.repeat(j1frames);
                     fastest_frames = j1frames;
                 }
                 speed *= vjump_multiplier;
@@ -162,7 +173,8 @@
                     ) {
                         output = "Shortest route is " + (j1frames + pframes) + " frames:" +
                             " press shift, advance " + j1frames + " times;" +
-                            " release shift, advance " + pframes + " times";
+                            " release shift, advance " + pframes + " times" +
+							" Macro: LeftShift(P)" + '>'.repeat(j1frames) + "." + '>'.repeat(Math.max(0, pframes-1));
                         fastest_frames = j1frames + pframes;
                     }
                     if (speed2 > 0.0 && y2 >= target_max) {
@@ -189,12 +201,14 @@
                             if (pframes === 0) {
                                 output = "Shortest route is " + (j1frames + pframes + j2frames) + " frames:" +
                                     " press shift, advance " + j1frames + " times;" +
-                                    " release-press shift; advance " + j2frames + " times";
+                                    " release-press shift; advance " + j2frames + " times" +
+									" Macro: LeftShift(P)" + '>'.repeat(j1frames) + ".(RP)" + '>'.repeat(Math.max(0, j2frames-1));
                             } else {
                                 output = "Shortest route is " + (j1frames + pframes + j2frames) + " frames:" +
                                     " press shift, advance " + j1frames + " times;" +
                                     " release shift, advance " + pframes + " times;" +
-                                    " press shift, advance " + j2frames + " times";
+                                    " press shift, advance " + j2frames + " times" +
+									" Macro: LeftShift(P)" + '>'.repeat(j1frames) + "." + '>'.repeat(pframes) + "." + '>'.repeat(Math.max(0, j2frames-1));
                             }
                             fastest_frames = j1frames + pframes + j2frames;
                         }
@@ -215,20 +229,23 @@
                                         "Shortest route is " + (j1frames + pframes + j2frames + p2frames) + " frames:" +
                                         " press shift, advance " + j1frames + " times;" +
                                         " release-press shift; advance " + j2frames + " times;" +
-                                        " release shift, advance " + p2frames + " times";
+                                        " release shift, advance " + p2frames + " times" +
+										" Macro: LeftShift(P)" + '>'.repeat(j1frames) + ".(RP)" + '>'.repeat(j2frames) + "." + '>'.repeat(Math.max(0, p2frames-1));
                                 } else if (j2frames === 0) {
                                     output =
                                         "Shortest route is " + (j1frames + pframes + j2frames + p2frames) + " frames:" +
                                         " press shift, advance " + j1frames + " times;" +
                                         " release shift, advance " + pframes + " times;" +
-                                        " press-release shift; release shift, advance " + p2frames + " times";
+                                        " press-release shift; release shift, advance " + p2frames + " times" +
+										" Macro: LeftShift(P)" + '>'.repeat(j1frames) + "." + '>'.repeat(pframes) + ".(PR)>.(R)" + '>'.repeat(Math.max(0, p2frames-1));
                                 } else {
                                     output =
                                         "Shortest route is " + (j1frames + pframes + j2frames + p2frames) + " frames:" +
                                         " press shift, advance " + j1frames + " times;" +
                                         " release shift, advance " + pframes + " times;" +
                                         " press shift, advance " + j2frames + " times;" +
-                                        " release shift, advance " + p2frames + " times";
+                                        " release shift, advance " + p2frames + " times" +
+										" Macro: LeftShift(P)" + '>'.repeat(j1frames) + "." + '>'.repeat(pframes) + "." + '>'.repeat(j2frames) + "." + '>'.repeat(Math.max(0, p2frames-1));
                                 }
                                 fastest_frames = j1frames + pframes + j2frames + p2frames;
                             }
@@ -262,6 +279,7 @@
     <input type="number" id="bheight"></p>
     <br />
     <input type="submit" value="Calculate" onclick="calculate()">
+    <input type="submit" value="Copy Macro" onclick="copymacro()">
     <br /><br />
     <p id="answer"></p>
 </body>
